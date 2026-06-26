@@ -1,0 +1,116 @@
+---
+- name: DevOps Server Setup
+  hosts: webservers
+  become: true
+
+  tasks:
+
+    - name: Install Git
+      dnf:
+        name: git
+        state: present
+
+    - name: Install Docker
+      dnf:
+        name: docker
+        state: present
+
+    - name: Enable Docker
+      service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Create devops user
+      user:
+        name: devops
+        shell: /bin/bash
+        create_home: true
+
+    - name: Create application directory
+      file:
+        path: /app
+        state: directory
+        owner: devops
+        group: devops
+        mode: '0755'
+
+    - name: Install Nginx
+      dnf:
+        name: nginx
+        state: present
+
+    - name: Start Nginx
+      service:
+        name: nginx
+        state: started
+        enabled: true
+
+    - name: Deploy Portfolio Page
+      copy:
+        dest: /usr/share/nginx/html/index.html
+        content: |
+          <!DOCTYPE html>
+          <html>
+          <head>
+              <title>Palmer's DevOps Portfolio</title>
+              <style>
+                  body{
+                      background:#f5f5f5;
+                      font-family:Arial;
+                      text-align:center;
+                      padding-top:70px;
+                  }
+                  .card{
+                      width:70%;
+                      margin:auto;
+                      background:white;
+                      padding:30px;
+                      border-radius:12px;
+                      box-shadow:0 0 10px gray;
+                  }
+                  h1{
+                      color:#0078D7;
+                  }
+              </style>
+          </head>
+
+          <body>
+
+          <div class="card">
+
+          <h1>🚀 Palmer's DevOps Portfolio</h1>
+
+          <h2>Automated with Ansible</h2>
+
+          <hr>
+
+          <p><strong>Name:</strong> Palmer</p>
+
+          <p><strong>Role:</strong> DevOps Engineer</p>
+
+          <p><strong>Cloud Platform:</strong> AWS EC2</p>
+
+          <p><strong>Configuration Management:</strong> Ansible</p>
+
+          <p><strong>Operating System:</strong> Amazon Linux 2023</p>
+
+          <h3>Project Completed Successfully ✅</h3>
+
+          <p>
+          This server was configured automatically using one Ansible Playbook.
+          </p>
+
+          <footer>
+
+          <hr>
+
+          Built with ❤️ by Palmer
+
+          </footer>
+
+          </div>
+
+          </body>
+
+          </html>
